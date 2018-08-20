@@ -3,9 +3,11 @@ const express = require('express');
 const socketIO = require('socket.io');
 const http = require('http');
 
+
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 
+let {generateMessage} = require('./utils/message');
 let app = express();
 let server = http.createServer(app);
 let io = socketIO(server);
@@ -15,17 +17,9 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
 	console.log('New user conected.');
 
-	socket.emit('newMessage', {
-		from: 'Admin',
-		text: 'Welcome to group!!!',
-		createdAt: new Date().getTime()
-	});
+	socket.emit('newMessage', generateMessage('Admin', 'Welcome to group!!!'));
 
-	socket.broadcast.emit('newMessage', {
-		from: 'Admin',
-		text: 'New Member has joined the group',
-		createdAt: new Date().getTime()
-	});
+	socket.broadcast.emit('newMessage', generateMessage('Admin', 'New Member has joined the group'));
 
 	// socket.emit('newEmail', {
 	// 	from: "shashankgva@gmail.com",
@@ -45,11 +39,7 @@ io.on('connection', (socket) => {
 		// 	text: message.text,
 		// 	createdAt: new Date().getTime()
 		// });
-		socket.broadcast.emit('newMessage', {
-			from: message.from,
-			text: message.text,
-			createdAt: new Date().getTime()
-		});
+		socket.broadcast.emit('newMessage', generateMessage(message.from, message.text));
 	});
 
 	socket.on('disconnect', () => {
