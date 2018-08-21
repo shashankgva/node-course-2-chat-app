@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
 		console.log('createEmail', newEmail);
 	});
 
-	socket.on('createMessage', (message) => {
+	socket.on('createMessage', (message, callback) => {
 		console.log('createMessage', message);
 		// io.emit('newMessage', {
 		// 	from: message.from,
@@ -40,6 +40,7 @@ io.on('connection', (socket) => {
 		// 	createdAt: new Date().getTime()
 		// });
 		socket.broadcast.emit('newMessage', generateMessage(message.from, message.text));
+		callback('THis is from the server');
 	});
 
 	socket.on('disconnect', () => {
